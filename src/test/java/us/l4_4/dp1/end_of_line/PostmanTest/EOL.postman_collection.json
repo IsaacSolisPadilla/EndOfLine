@@ -1,0 +1,2871 @@
+{
+	"info": {
+		"_postman_id": "85ac811a-f884-411e-ae34-d99da520aacc",
+		"name": "EOL Copy 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26140924",
+		"_collection_link": "https://orange-capsule-642161.postman.co/workspace/EOL~4dd06015-512a-487e-8e27-691798ad0195/collection/26140924-85ac811a-f884-411e-ae34-d99da520aacc?action=share&source=collection_link&creator=26140924"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "TokenUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" var data = JSON.parse(responseBody);\r",
+									" postman.setGlobalVariable(\"token\", data.token)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"javrodrei\",\r\n    \"password\":\"Play3r!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/auth/signin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TokenAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" var data = JSON.parse(responseBody);\r",
+									" postman.setGlobalVariable(\"tokenAdmin\", data.token)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"admin1\",\r\n    \"password\":\"Adm1n!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/auth/signin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Achievements",
+			"item": [
+				{
+					"name": "GetAchievements",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verificar estructura y datos del JSON\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    // Verificar si es un array\r",
+									"    pm.expect(jsonData).to.be.an('array');\r",
+									"\r",
+									"    // Verificar la estructura de cada elemento del array\r",
+									"    jsonData.forEach(function (achievement) {\r",
+									"        pm.expect(achievement).to.have.all.keys('id', 'name', 'description', 'badgeNotAchieved', 'badgeAchieved', 'threshold', 'category', 'playerAchievements');\r",
+									"        pm.expect(achievement.id).to.be.a('number');\r",
+									"        pm.expect(achievement.name).to.be.a('string');\r",
+									"        pm.expect(achievement.description).to.be.a('string');\r",
+									"        pm.expect(achievement.badgeNotAchieved).to.be.a('string');\r",
+									"        pm.expect(achievement.badgeAchieved).to.be.a('string');\r",
+									"        pm.expect(achievement.threshold).to.be.a('number');\r",
+									"        pm.expect(achievement.category).to.be.a('string');\r",
+									"        pm.expect(achievement.playerAchievements).to.be.an('array');\r",
+									"\r",
+									"        // Verificar la estructura de playerAchievements si existe\r",
+									"        if (achievement.playerAchievements.length > 0) {\r",
+									"            achievement.playerAchievements.forEach(function (playerAchievement) {\r",
+									"                pm.expect(playerAchievement).to.have.all.keys('id', 'achieveAt');\r",
+									"                pm.expect(playerAchievement.id).to.be.a('number');\r",
+									"                pm.expect(playerAchievement.achieveAt).to.match(/^\\d{4}-\\d{2}-\\d{2}$/); // Verificar que tenga formato de fecha\r",
+									"            });\r",
+									"        }\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"El código de estado es 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"La respuesta es un array\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/achievements",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"achievements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAchievementById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"El objeto tiene la estructura correcta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'name', 'description', 'badgeNotAchieved', 'badgeAchieved', 'threshold', 'category', 'playerAchievements');\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.description).to.be.a('string');\r",
+									"    pm.expect(responseData.badgeNotAchieved).to.be.a('string');\r",
+									"    pm.expect(responseData.badgeAchieved).to.be.a('string');\r",
+									"    pm.expect(responseData.category).to.be.a('string');\r",
+									"    pm.expect(responseData.threshold).to.be.a('number');\r",
+									"    pm.expect(responseData.playerAchievements).to.be.an('array');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/achievements/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"achievements",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateAchievement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 201 para una actualización exitosa\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"El objeto tiene la estructura correcta y los datos actualizados\", function () {\r",
+									"     var requestPayload = JSON.parse(pm.request.body.raw);\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'name', 'description', 'badgeNotAchieved', 'badgeAchieved', 'threshold', 'category', 'playerAchievements');\r",
+									"    pm.expect(responseData.id).to.eql(requestPayload.id);\r",
+									"    pm.expect(responseData.name).to.eql(requestPayload.name);\r",
+									"    pm.expect(responseData.description).to.eql(requestPayload.description);\r",
+									"    pm.expect(responseData.badgeNotAchieved).to.eql(requestPayload.badgeNotAchieved);\r",
+									"    pm.expect(responseData.badgeAchieved).to.eql(requestPayload.badgeAchieved);\r",
+									"    pm.expect(responseData.threshold).to.eql(requestPayload.threshold);\r",
+									"    pm.expect(responseData.category).to.eql(requestPayload.category);\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.description).to.be.a('string');\r",
+									"    pm.expect(responseData.badgeNotAchieved).to.be.a('string');\r",
+									"    pm.expect(responseData.badgeAchieved).to.be.a('string');\r",
+									"    pm.expect(responseData.category).to.be.a('string');\r",
+									"    pm.expect(responseData.threshold).to.be.a('number');\r",
+									"    pm.expect(responseData.playerAchievements).to.be.an('array');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Initial Voyage\",\r\n    \"description\": \"Embark on your first adventure in the realm of games.\",\r\n    \"badgeNotAchieved\": \"https://cdn-icons-png.flaticon.com/128/4245/4245488.png\",\r\n    \"badgeAchieved\": \"https://cdn-icons-png.flaticon.com/128/4245/4245499.png\",\r\n    \"threshold\": 1.0,\r\n    \"category\": \"VICTORIES\",\r\n        \"playerAchievements\": [\r\n            {\r\n                \"id\": 1,\r\n                \"achieveAt\": \"2023-09-01\"\r\n            }\r\n        ]\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/achievements",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"achievements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateAchievement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200 para una actualización exitosa\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"El objeto tiene la estructura correcta y los datos actualizados\", function () {\r",
+									"     var requestPayload = JSON.parse(pm.request.body.raw);\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'name', 'description', 'badgeNotAchieved', 'badgeAchieved', 'threshold', 'category', 'playerAchievements');\r",
+									"    pm.expect(responseData.id).to.eql(requestPayload.id);\r",
+									"    pm.expect(responseData.name).to.eql(requestPayload.name);\r",
+									"    pm.expect(responseData.description).to.eql(requestPayload.description);\r",
+									"    pm.expect(responseData.badgeNotAchieved).to.eql(requestPayload.badgeNotAchieved);\r",
+									"    pm.expect(responseData.badgeAchieved).to.eql(requestPayload.badgeAchieved);\r",
+									"    pm.expect(responseData.threshold).to.eql(requestPayload.threshold);\r",
+									"    pm.expect(responseData.category).to.eql(requestPayload.category);\r",
+									"    \r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.description).to.be.a('string');\r",
+									"    pm.expect(responseData.badgeNotAchieved).to.be.a('string');\r",
+									"    pm.expect(responseData.badgeAchieved).to.be.a('string');\r",
+									"    pm.expect(responseData.threshold).to.be.a('number');\r",
+									"    pm.expect(responseData.category).to.be.a('string');\r",
+									"    pm.expect(responseData.playerAchievements).to.be.an('array');\r",
+									"});\r",
+									"pm.test(\"Verificar la URL del avatar\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var urlRegex = /^(http|https):\\/\\/[^ \"]+$/;\r",
+									"    pm.expect(responseData.badgeAchieved).to.match(urlRegex);\r",
+									"    pm.expect(responseData.badgeAchieved).to.eql(\"https://cdn-icons-png.flaticon.com/128/4245/4245497.png\");\r",
+									"     pm.expect(responseData.badgeNotAchieved).to.match(urlRegex);\r",
+									"    pm.expect(responseData.badgeNotAchieved).to.eql(\"https://cdn-icons-png.flaticon.com/128/4245/4245486.png\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"First crossing\",\r\n    \"description\": \"This is just the beggining, take part in your first game\",\r\n    \"badgeNotAchieved\": \"https://cdn-icons-png.flaticon.com/128/4245/4245486.png\",\r\n    \"badgeAchieved\": \"https://cdn-icons-png.flaticon.com/128/4245/4245497.png\",\r\n    \"threshold\": 5.0,\r\n    \"category\": \"GAMES_PLAYED\",\r\n    \"playerAchievements\": [\r\n        {\r\n            \"id\": 1,\r\n            \"achieveAt\": \"2023-09-01\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/achievements/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"achievements",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteAchievement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200 o 204\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"pm.test(\"Verificar que no hay cuerpo en la respuesta para 204 No Content\", function () {\r",
+									"    if(pm.response.code === 204) {\r",
+									"        pm.response.to.not.have.body;\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"First crossing\",\r\n    \"description\": \"This is just the beggining, take part in your first game\",\r\n    \"badgeNotAchieved\": \"https://cdn-icons-png.flaticon.com/128/4245/4245486.png\",\r\n    \"badgeAchieved\": \"https://cdn-icons-png.flaticon.com/128/4245/4245497.png\",\r\n    \"threshold\": 5.0,\r\n    \"category\": \"GAMES_PLAYED\",\r\n    \"playerAchievements\": [\r\n        {\r\n            \"id\": 1,\r\n            \"achieveAt\": \"2023-09-01\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/achievements/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"achievements",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Game",
+			"item": [
+				{
+					"name": "GetStatistics",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar juegos pendientes\", function () {\r",
+									"    pm.expect(pm.response.json().gamesPending).to.eql(\"1\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar juegos terminados\", function () {\r",
+									"    pm.expect(pm.response.json().gamesFinished).to.eql(\"16\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar total de jugadores\", function () {\r",
+									"    pm.expect(pm.response.json().totalPlayers).to.eql(\"9\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar total de juegos\", function () {\r",
+									"    pm.expect(pm.response.json().totalGames).to.eql(\"17\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar duración promedio de juego\", function () {\r",
+									"    pm.expect(pm.response.json().averageGameDuration).to.eql(\"0h 24m 50s\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar promedio de juegos por jugador\", function () {\r",
+									"    pm.expect(pm.response.json().avgGames).to.eql(\"1,9\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar máximo de rondas en un juego\", function () {\r",
+									"    pm.expect(pm.response.json().maxRounds).to.eql(\"27\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Verificar promedio de rondas por juego\", function () {\r",
+									"    pm.expect(pm.response.json().avgRounds).to.eql(\"21,9\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar energía promedio utilizada\", function () {\r",
+									"    pm.expect(pm.response.json().averageEnergyUsed).to.eql(\"0,91\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar duración total de todos los juegos\", function () {\r",
+									"    pm.expect(pm.response.json().totalGameDuration).to.eql(\"6h 37m 29s\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar mínimo de juegos jugados por jugador\", function () {\r",
+									"    pm.expect(pm.response.json().minGamesPlayed).to.eql(\"1\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar color más utilizado\", function () {\r",
+									"    pm.expect(pm.response.json().mostUsedColor).to.eql(\"RED\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar máximo de juegos jugados por un jugador\", function () {\r",
+									"    pm.expect(pm.response.json().maxGamesPlayed).to.eql(\"12\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar duración mínima de un juego\", function () {\r",
+									"    pm.expect(pm.response.json().minGameDuration).to.eql(\"0h 15m 49s\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar duración máxima de un juego\", function () {\r",
+									"    pm.expect(pm.response.json().maxGameDuration).to.eql(\"0h 37m 0s\");\r",
+									"});\r",
+									"pm.test(\"Verificar rondas minimas de un juego\", function () {\r",
+									"    pm.expect(pm.response.json().minRounds).to.eql(\"16\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/statistics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"statistics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllGames",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que hay mas de un juego asociado a un player\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.length).to.be.above(1);\r",
+									"});\r",
+									"pm.test(\"Verificar que cada juego tiene exactamente dos 'gamePlayers'\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    responseData.forEach(element => {\r",
+									"        pm.expect(element.gamePlayers.length).to.eql(2);\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar que los gamePlayers de cada juego son distintos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    responseData.forEach(element => {\r",
+									"        var ids = element.gamePlayers.map(player => player.id);\r",
+									"        pm.expect(ids[0]).to.not.eql(ids[1]);\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar que cada gamePlayer tiene 25 cartas si el juego esta en curso\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    responseData.forEach(element => {\r",
+									"        element.gamePlayers.forEach(gamePlayer => {\r",
+									"            if (!element.winner) {\r",
+									"            pm.expect(gamePlayer.cards.length).to.eql(25);\r",
+									"            }\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificaciones varias en cada elemento del JSON\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    responseData.forEach(element => {\r",
+									"        if (element.winner) {\r",
+									"            var winnerId = element.winner.id;\r",
+									"            var playerIds = element.gamePlayers.map(player => player.player.id);\r",
+									"            pm.expect(playerIds).to.include(winnerId);\r",
+									"        }\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetGameByGameId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un solo elemento\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"});\r",
+									"pm.test(\"Verificar que hay exactamente dos 'gamePlayers'\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.gamePlayers.length).to.eql(2);\r",
+									"\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo id\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('id');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo round\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('round');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo winner\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('winner');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo startedAt\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('startedAt');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayers\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayers');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayerTurnId\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayerTurnId');\r",
+									"});\r",
+									"pm.test(\"Verificar que el ID es 16\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.eql(16);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"    "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllCardsOfGame",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar que hay exactamente 50 cartas en la respuesta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.length).to.eql(50);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/17/cards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"17",
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetGamePlayerByGameId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que hay exactamente 2 gamePlayers asociados a un game\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.length).to.eql(2);\r",
+									"});\r",
+									"pm.test(\"Verificar que el atributo 'color' es diferente entre los dos gamePlayers\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    var colorFirstElement = responseData[0].color;\r",
+									"    var colorSecondElement = responseData[1].color;\r",
+									"    pm.expect(colorFirstElement).to.not.eql(colorSecondElement);\r",
+									"});\r",
+									"pm.test(\"Verificar que los id de los jugadores son distintos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    var colorFirstElement = responseData[0].id;\r",
+									"    var colorSecondElement = responseData[1].id;\r",
+									"    pm.expect(colorFirstElement).to.not.eql(colorSecondElement);\r",
+									"});\r",
+									"pm.test(\"Verificar que todos los elementos en 'cards' son del mismo color para cada jugador\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    responseData.forEach(element => {\r",
+									"        var firstCardColor = element.cards[0].color;\r",
+									"\r",
+									"        element.cards.forEach(card => {\r",
+									"            pm.expect(card.color).to.eql(firstCardColor);\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar que ambos gamePlayers tienen exactamente 25 cartas\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData[0].cards.length).to.eql(25);\r",
+									"    pm.expect(responseData[1].cards.length).to.eql(25);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/17/gameplayers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"17",
+								"gameplayers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllMessageByGameId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que solo hay 2 colores distintos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var uniqueColors = new Set();\r",
+									"\r",
+									"    responseData.forEach(element => {\r",
+									"        uniqueColors.add(element.color);\r",
+									"    });\r",
+									"\r",
+									"    pm.expect(uniqueColors.size).to.eql(2);\r",
+									"});\r",
+									"pm.test(\"Verificar que solo hay 2 colores distintos y que ninguna reacción es nula\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    responseData.forEach(element => {\r",
+									"        pm.expect(element.reaction).to.not.be.null;\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/17/messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"17",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCardsPossiblePositions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verificar que hay 3 elementos separados por comas\", function () {\r",
+									"    \r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    \r",
+									"    var arrayElements = responseData[0].split(',');\r",
+									"\r",
+									"    \r",
+									"    pm.expect(arrayElements.length).to.eql(3);\r",
+									"});\r",
+									"pm.test(\"Verificar que los dos primeros elementos son números\", function () {\r",
+									"\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"\r",
+									"    var arrayElements = responseData[0].split(',');\r",
+									"\r",
+									"\r",
+									"    pm.expect(Number(arrayElements[0])).to.be.a('number');\r",
+									"    pm.expect(Number(arrayElements[1])).to.be.a('number');\r",
+									"    pm.expect(!isNaN(arrayElements[0])).to.be.true;\r",
+									"    pm.expect(!isNaN(arrayElements[1])).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar que el tercer elemento es una letra mayúscula entre W, S, N, E\", function () {\r",
+									"\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"\r",
+									"    var arrayElements = responseData[0].split(',');\r",
+									"\r",
+									"\r",
+									"    var thirdElement = arrayElements[2];\r",
+									"\r",
+									"\r",
+									"    pm.expect(thirdElement).to.be.oneOf(['W', 'S', 'N', 'E']);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar que los dos primeros elementos están en el rango [0, 6]\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var arrayElements = responseData[0].split(',');\r",
+									"\r",
+									"    pm.expect(Number(arrayElements[0])).to.be.at.least(0).and.to.be.at.most(6);\r",
+									"    pm.expect(Number(arrayElements[1])).to.be.at.least(0).and.to.be.at.most(6);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/17/gameplayers/33/cards/positions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"17",
+								"gameplayers",
+								"33",
+								"cards",
+								"positions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateGame",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"pm.test(\"Verificar que cada gamePlayer tiene 25 cartas\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"\r",
+									"    responseData.gamePlayers.forEach(gamePlayer => {\r",
+									"        pm.expect(gamePlayer.cards.length).to.eql(25);\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar que no hay ganador\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.winner).to.be.null;\r",
+									"});\r",
+									"pm.test(\"Verificar que no tiene fecha de finalización\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.endedAt).to.be.null;\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un solo elemento\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"});\r",
+									"pm.test(\"Verificar que hay exactamente dos 'gamePlayers'\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.gamePlayers.length).to.eql(2);\r",
+									"\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo id\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('id');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo round\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('round');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo winner\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('winner');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo startedAt\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('startedAt');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayers\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayers');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayerTurnId\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayerTurnId');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player1Id\": 1,\r\n    \"player2Id\": 5,\r\n    \"player1Color\": \"RED\",\r\n    \"player2Color\": \"BLUE\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCardsInHand",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que hay 5 cartas en la respuesta\", function () {\r",
+									"    var responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.length).to.eql(5);\r",
+									"});\r",
+									"pm.test(\"Verificar que todas las cartas son de color ROJO\", function () {\r",
+									"    var responseJson = pm.response.json();\r",
+									"    responseJson.forEach(function(card) {\r",
+									"        pm.expect(card.color).to.eql(\"ORANGE\");\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar que todas las cartas tienen un 'id' y una 'iniciativa'\", function () {\r",
+									"    var responseJson = pm.response.json();\r",
+									"    responseJson.forEach(function(card) {\r",
+									"        pm.expect(card.id).to.be.a('number');\r",
+									"        pm.expect(card.initiative).to.be.a('number');\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar que todas las cartas tienen orientación 'S'\", function () {\r",
+									"    var responseJson = pm.response.json();\r",
+									"    responseJson.forEach(function(card) {\r",
+									"        pm.expect(card.orientation).to.eql(\"S\");\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar que las iniciativas están en el rango [0, 5]\", function () {\r",
+									"    var responseJson = pm.response.json();\r",
+									"\r",
+									"    responseJson.forEach(function(card) {\r",
+									"        pm.expect(card.initiative).to.be.at.least(0);\r",
+									"        pm.expect(card.initiative).to.be.at.most(5);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/17/cards/discard",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"17",
+								"cards",
+								"discard"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateGameTurn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un solo elemento\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"});\r",
+									"pm.test(\"Verificar que 'gamePlayers' tiene dos elementos\", function () {\r",
+									"    var responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.gamePlayers.length).to.eql(2);\r",
+									"});\r",
+									"pm.test(\"Verificar que el 'gamePlayerTurnId' es 32\", function () {\r",
+									"    var responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.gamePlayerTurnId).to.eql(34);\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo id\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('id');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo round\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('round');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo winner\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('winner');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo startedAt\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('startedAt');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayers\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayers');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayerTurnId\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayerTurnId');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/17",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateEffect",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un solo elemento\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"});\r",
+									"pm.test(\"Verificar que hay exactamente dos 'gamePlayers'\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.gamePlayers.length).to.eql(2);\r",
+									"\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo id\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('id');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo round\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('round');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo winner\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('winner');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo startedAt\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('startedAt');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayers\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayers');\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene un atributo gamePlayerTurnId\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"   pm.expect(responseData).to.have.property('gamePlayerTurnId');\r",
+									"});\r",
+									"pm.test(\"Verificar que el ID es 401\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"effect\":\"REVERSE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/401/effect",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"401",
+								"effect"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteGameByGameIdAndGamePlayerId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200 o 204\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"pm.test(\"Verificar que no hay cuerpo en la respuesta para 204 No Content\", function () {\r",
+									"    if(pm.response.code === 204) {\r",
+									"        pm.response.to.not.have.body;\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/16/gameplayers/32",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"16",
+								"gameplayers",
+								"32"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteGameByGameId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200 o 204\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"pm.test(\"Verificar que no hay cuerpo en la respuesta para 204 No Content\", function () {\r",
+									"    if(pm.response.code === 204) {\r",
+									"        pm.response.to.not.have.body;\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/games/15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"games",
+								"15"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cards",
+			"item": [
+				{
+					"name": "UpdateCard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que el valor de orientation es N\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.orientation).to.eql(\"N\");\r",
+									"});\r",
+									"pm.test(\"Verificar que el valor de row es 2\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.row).to.eql(2);\r",
+									"});\r",
+									"pm.test(\"Verificar que el valor de row es 0\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.column).to.eql(0);\r",
+									"});\r",
+									"pm.test(\"Verificar que el valor de cardState es ON_BOARD\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.cardState).to.eql(\"ON_BOARD\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"orientation\": \"N\",\r\n    \"row\": 2,\r\n    \"column\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/cards/201",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"cards",
+								"201"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Friendships",
+			"item": [
+				{
+					"name": "GetAllFriendsships",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Verificar que la respuesta contiene al menos un friendship\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.be.an('array').that.is.not.empty;\r",
+									"});\r",
+									"pm.test(\"Verificar que ningún sender sea null\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const senders = jsonData.map(item => item.sender);\r",
+									"    pm.expect(senders).to.not.include(null);\r",
+									"});\r",
+									"pm.test(\"Verificar que ningún receiver sea null\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const receivers = jsonData.map(item => item.receiver);\r",
+									"    pm.expect(receivers).to.not.include(null);\r",
+									"});\r",
+									"pm.test(\"Verificar que todos los sender tengan authority igual a PLAYER\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const senders = jsonData.map(item => item.sender);\r",
+									"    for (const sender of senders) {\r",
+									"        pm.expect(sender.authority.authority).to.equal(\"PLAYER\");\r",
+									"    }\r",
+									"});\r",
+									"pm.test(\"Verificar que todos los receiver tengan authority igual a PLAYER\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const receivers = jsonData.map(item => item.receiver);\r",
+									"    for (const receiver of receivers) {\r",
+									"        pm.expect(receiver.authority.authority).to.equal(\"PLAYER\");\r",
+									"    }\r",
+									"});\r",
+									"pm.test(\"Verificar que todos los objetos tienen un atributo friendshipState\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    for (const item of jsonData) {\r",
+									"        pm.expect(item).to.have.property(\"friendState\");\r",
+									"    }\r",
+									"});\r",
+									"pm.test(\"Los IDs del 'sender' y 'receiver' son distintos\", function () {\r",
+									"    const data = pm.response.json();\r",
+									"    for (const element of data) {\r",
+									"        const senderId = element.sender.id;\r",
+									"        const receiverId = element.receiver.id;\r",
+									"        pm.expect(senderId).to.not.equal(receiverId);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/friendships/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"friendships",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetFriendshipById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"La API está en línea\", function () {\r",
+									"    pm.response.to.be.ok;\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"El campo 'id' es igual a 1\", function () {\r",
+									"    pm.expect(pm.response.json().id).to.equal(1);\r",
+									"});\r",
+									"pm.test(\"El campo 'sender' no es nulo\", function () {\r",
+									"    pm.expect(pm.response.json().sender).to.not.be.null;\r",
+									"});\r",
+									"pm.test(\"El campo 'receiver' no es nulo\", function () {\r",
+									"    pm.expect(pm.response.json().receiver).to.not.be.null;\r",
+									"});\r",
+									"pm.test(\"El campo 'authority' del 'sender' es igual a 'Player'\", function () {\r",
+									"    pm.expect(pm.response.json().sender.authority.authority).to.equal(\"PLAYER\");\r",
+									"});\r",
+									"pm.test(\"El campo 'authority' del 'receiver' es igual a 'Player'\", function () {\r",
+									"    pm.expect(pm.response.json().receiver.authority.authority).to.equal(\"PLAYER\");\r",
+									"});\r",
+									"pm.test(\"El ID del 'sender' es diferente al ID del 'receiver'\", function () {\r",
+									"    const senderId = pm.response.json().sender.id;\r",
+									"    const receiverId = pm.response.json().receiver.id;\r",
+									"    pm.expect(senderId).to.not.equal(receiverId);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/friendships/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"friendships",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatedFriendship",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"pm.test(\"El campo 'sender' no es nulo\", function () {\r",
+									"    pm.expect(pm.response.json().sender).to.not.be.null;\r",
+									"});\r",
+									"pm.test(\"El campo 'receiver' no es nulo\", function () {\r",
+									"    pm.expect(pm.response.json().receiver).to.not.be.null;\r",
+									"});\r",
+									"pm.test(\"El campo 'authority' del 'sender' es igual a 'Player'\", function () {\r",
+									"    pm.expect(pm.response.json().sender.authority.authority).to.equal(\"PLAYER\");\r",
+									"});\r",
+									"pm.test(\"El campo 'authority' del 'receiver' es igual a 'Player'\", function () {\r",
+									"    pm.expect(pm.response.json().receiver.authority.authority).to.equal(\"PLAYER\");\r",
+									"});\r",
+									"pm.test(\"El ID del 'sender' es diferente al ID del 'receiver'\", function () {\r",
+									"    const senderId = pm.response.json().sender.id;\r",
+									"    const receiverId = pm.response.json().receiver.id;\r",
+									"    pm.expect(senderId).to.not.equal(receiverId);\r",
+									"});\r",
+									"pm.test(\"Verificar que el ID del sender sea igual a 4\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.sender.id).to.eql(4);\r",
+									"});\r",
+									"pm.test(\"Verificar que el receiver sea igual a 7\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.receiver.id).to.eql(7);\r",
+									"});\r",
+									"pm.test(\"Verificar que friendship_state sea igual a 'PENDING'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.friendState).to.eql(\"PENDING\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":30,\r\n    \"sender\": 4, \r\n    \"receiver\": 7, \r\n    \"friendship_state\": \"PENDING\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/friendships",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"friendships"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateFriendshipStatus",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"El campo 'id' es igual a 7\", function () {\r",
+									"    pm.expect(pm.response.json().id).to.equal(7);\r",
+									"});\r",
+									"pm.test(\"El campo 'sender' no es nulo\", function () {\r",
+									"    pm.expect(pm.response.json().sender).to.not.be.null;\r",
+									"});\r",
+									"pm.test(\"El campo 'receiver' no es nulo\", function () {\r",
+									"    pm.expect(pm.response.json().receiver).to.not.be.null;\r",
+									"});\r",
+									"pm.test(\"El campo 'authority' del 'sender' es igual a 'Player'\", function () {\r",
+									"    pm.expect(pm.response.json().sender.authority.authority).to.equal(\"PLAYER\");\r",
+									"});\r",
+									"pm.test(\"El campo 'authority' del 'receiver' es igual a 'Player'\", function () {\r",
+									"    pm.expect(pm.response.json().receiver.authority.authority).to.equal(\"PLAYER\");\r",
+									"});\r",
+									"pm.test(\"El ID del 'sender' es diferente al ID del 'receiver'\", function () {\r",
+									"    const senderId = pm.response.json().sender.id;\r",
+									"    const receiverId = pm.response.json().receiver.id;\r",
+									"    pm.expect(senderId).to.not.equal(receiverId);\r",
+									"});\r",
+									"pm.test(\"Verificar que el ID del sender sea igual a 10\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.sender.id).to.eql(10);\r",
+									"});\r",
+									"pm.test(\"Verificar que el receiver sea igual a 3\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.receiver.id).to.eql(3);\r",
+									"});\r",
+									"pm.test(\"Verificar que friendship_state sea igual a 'ACCEPTED'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.friendState).to.eql(\"ACCEPTED\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sender\": 3, \r\n    \"receiver\": 10, \r\n    \"friendship_state\": \"ACCEPTED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/friendships/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"friendships",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteFriendship",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200 o 204\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"pm.test(\"Verificar que no hay cuerpo en la respuesta para 204 No Content\", function () {\r",
+									"    if(pm.response.code === 204) {\r",
+									"        pm.response.to.not.have.body;\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/friendships/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"friendships",
+								"16"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Message",
+			"item": [
+				{
+					"name": "CreatedMessage",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 201 para una actualización exitosa\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verificar la estructura y valores del JSON de respuesta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.keys('id', 'color', 'reaction');\r",
+									"    pm.expect(responseData.color).to.eql('BLUE');\r",
+									"    pm.expect(responseData.reaction).to.eql('SORRY');\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de cada campo\", function(){\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.color).to.be.a('string');\r",
+									"    pm.expect(responseData.reaction).to.be.a('string');\r",
+									"});\r",
+									"pm.test(\"Verificar la presencia de campos obligatorios\", function(){\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.include.keys('id', 'color', 'reaction');\r",
+									"});\r",
+									"pm.test(\"Verificar condiciones específicas de los campos\", function(){\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gameId\": 16,\r\n    \"color\": \"BLUE\", \r\n    \"reaction\": \"SORRY\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Player",
+			"item": [
+				{
+					"name": "GetAllPlayers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"La respuesta es un array\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"});\r",
+									"pm.test(\"El array tiene la longitud esperada\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.lengthOf(20); // Ajusta el número según lo esperado\r",
+									"});\r",
+									"pm.test(\"Todos los objetos tienen la estructura correcta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    responseData.forEach(function (item) {\r",
+									"        pm.expect(item).to.have.all.keys('id', 'name', 'surname', 'password', 'email', 'birthDate', 'nickname', 'authority', 'avatar', 'playerAchievement');\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    responseData.forEach(function (item) {\r",
+									"        pm.expect(item.id).to.be.a('number');\r",
+									"        pm.expect(item.name).to.be.a('string');\r",
+									"        pm.expect(item.surname).to.be.a('string');\r",
+									"        pm.expect(item.email).to.be.a('string');\r",
+									"        pm.expect(item.birthDate).to.be.a('string');\r",
+									"        pm.expect(item.nickname).to.be.a('string');\r",
+									"        pm.expect(item.birthDate).to.be.a('string');\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar la estructura de objetos anidados\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    responseData.forEach(function (item) {\r",
+									"        pm.expect(item.authority).to.have.all.keys('id', 'authority');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPlayerById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"El objeto tiene la estructura correcta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'name', 'surname', 'password', 'email', 'birthDate', 'nickname', 'authority', 'avatar', 'playerAchievement');\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.surname).to.be.a('string');\r",
+									"    pm.expect(responseData.email).to.be.a('string');\r",
+									"    pm.expect(responseData.birthDate).to.be.a('string');\r",
+									"    pm.expect(responseData.nickname).to.be.a('string');\r",
+									"    pm.expect(responseData.avatar).to.be.a('string');\r",
+									"    pm.expect(responseData.playerAchievement).to.be.an('array');\r",
+									"});\r",
+									"pm.test(\"Verificar datos específicos del jugador\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.eql(10);\r",
+									"    pm.expect(responseData.name).to.eql(\"Juan\");\r",
+									"    pm.expect(responseData.surname).to.eql(\"Fernandez\");\r",
+									"    pm.expect(responseData.email).to.eql(\"juanfg@gmail.com\");\r",
+									"});\r",
+									"pm.test(\"Verificar la URL del avatar\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var urlRegex = /^(http|https):\\/\\/[^ \"]+$/;\r",
+									"    pm.expect(responseData.avatar).to.match(urlRegex);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPlayerByNickname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"El objeto tiene la estructura correcta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'name', 'surname', 'password', 'email', 'birthDate', 'nickname', 'authority', 'avatar', 'playerAchievement');\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.surname).to.be.a('string');\r",
+									"    pm.expect(responseData.email).to.be.a('string');\r",
+									"    pm.expect(responseData.birthDate).to.be.a('string');\r",
+									"    pm.expect(responseData.nickname).to.be.a('string');\r",
+									"    pm.expect(responseData.avatar).to.be.a('string');\r",
+									"    pm.expect(responseData.playerAchievement).to.be.an('array');\r",
+									"});\r",
+									"pm.test(\"Verificar datos específicos del jugador\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.eql(10);\r",
+									"    pm.expect(responseData.name).to.eql(\"Juan\");\r",
+									"    pm.expect(responseData.surname).to.eql(\"Fernandez\");\r",
+									"    pm.expect(responseData.email).to.eql(\"juanfg@gmail.com\");\r",
+									"});\r",
+									"pm.test(\"Verificar la URL del avatar\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var urlRegex = /^(http|https):\\/\\/[^ \"]+$/;\r",
+									"    pm.expect(responseData.avatar).to.match(urlRegex);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/nickname/juanfer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"nickname",
+								"juanfer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllFriendsByPlayerId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"La respuesta es un array y no está vacío\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"});\r",
+									"pm.test(\"Todos los objetos tienen la estructura correcta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    responseData.forEach(function (item) {\r",
+									"        pm.expect(item).to.have.all.keys('id', 'name', 'surname', 'password', 'email', 'birthDate', 'nickname', 'authority', 'avatar', 'playerAchievement');\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    responseData.forEach(function (item) {\r",
+									"        pm.expect(item.id).to.be.a('number');\r",
+									"        pm.expect(item.name).to.be.a('string');\r",
+									"        pm.expect(item.surname).to.be.a('string');\r",
+									"        pm.expect(item.email).to.be.a('string');\r",
+									"        pm.expect(item.birthDate).to.be.a('string');\r",
+									"        pm.expect(item.nickname).to.be.a('string');\r",
+									"        pm.expect(item.avatar).to.be.a('string');\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar la estructura de objetos anidados como 'authority'\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    responseData.forEach(function (item) {\r",
+									"        pm.expect(item.authority).to.be.an('object');\r",
+									"        pm.expect(item.authority).to.have.all.keys('id', 'authority');\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Verificar datos específicos de un jugador con ID 4\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var specificPlayer = responseData.find(p => p.id === 4); // Busca al jugador con ID 4\r",
+									"\r",
+									"    // Comprueba que el jugador específico existe en la respuesta\r",
+									"    pm.expect(specificPlayer, \"El jugador con ID 4 debería existir en la respuesta\").to.not.be.undefined;\r",
+									"\r",
+									"    // Ahora verifica los detalles específicos de ese jugador\r",
+									"    pm.expect(specificPlayer.name).to.eql(\"Jorge\");\r",
+									"    pm.expect(specificPlayer.surname).to.eql(\"MuÃ±oz\");\r",
+									"    pm.expect(specificPlayer.email).to.eql(\"jorgemr@pm.me\");\r",
+									"    pm.expect(specificPlayer.birthDate).to.eql(\"1999-09-11\");\r",
+									"    pm.expect(specificPlayer.nickname).to.eql(\"Jorge_ADD\");\r",
+									"    pm.expect(specificPlayer.authority).to.have.all.keys('id', 'authority');\r",
+									"    pm.expect(specificPlayer.authority.id).to.eql(2);\r",
+									"    pm.expect(specificPlayer.authority.authority).to.eql(\"PLAYER\");\r",
+									"    var urlRegex = /^(http|https):\\/\\/[^ \"]+$/;\r",
+									"    pm.expect(specificPlayer.avatar).to.match(urlRegex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/3/friends",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"3",
+								"friends"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllFriendsshipsByPlayerId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"La respuesta es un array y no está vacío\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/5/friendships/ACCEPTED",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"5",
+								"friendships",
+								"ACCEPTED"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllGamesByPlayerId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/3/games",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"3",
+								"games"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetNotEndedGamesByPlayerId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/7/games/notended",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"7",
+								"games",
+								"notended"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetStatisticsByPlayerId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/7/statistics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"7",
+								"statistics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatePlayerAchievement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 201 para una actualización exitosa\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"La respuesta no tiene cuerpo\", function () {\r",
+									"    pm.response.to.not.have.body;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/2/playerachievements",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"2",
+								"playerachievements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatePlayer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 201 para una actualización exitosa\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"El objeto tiene la estructura correcta\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'name', 'surname', 'password', 'email', 'birthDate', 'nickname', 'authority', 'avatar', 'playerAchievement');\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.surname).to.be.a('string');\r",
+									"    pm.expect(responseData.password).to.be.a('string');\r",
+									"    pm.expect(responseData.email).to.be.a('string');\r",
+									"    pm.expect(responseData.birthDate).to.be.a('string'); // Asumiendo que las fechas son cadenas\r",
+									"    pm.expect(responseData.nickname).to.be.a('string');\r",
+									"    pm.expect(responseData.avatar).to.be.a('string');\r",
+									"    pm.expect(responseData.playerAchievement).to.be.an('array');\r",
+									"});\r",
+									"pm.test(\"Verificar datos específicos del objeto\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.name).to.eql(\"John1\");\r",
+									"    pm.expect(responseData.surname).to.eql(\"Doe\");\r",
+									"    pm.expect(responseData.email).to.eql(\"johndoe1@example.com\");\r",
+									"});\r",
+									"pm.test(\"Verificar la URL del avatar\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var urlRegex = /^(http|https):\\/\\/[^ \"]+$/;\r",
+									"    pm.expect(responseData.avatar).to.match(urlRegex);\r",
+									"});\r",
+									"pm.test(\"Verificar la estructura de objetos anidados como 'authority'\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.authority).to.be.an('object');\r",
+									"    pm.expect(responseData.authority).to.have.all.keys('id', 'authority');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"John1\",\r\n    \"surname\": \"Doe\",\r\n    \"password\": \"yourPassword123\",\r\n    \"email\": \"johndoe1@example.com\",\r\n    \"birthDate\": \"1990-01-01\",\r\n    \"nickname\": \"JohnD1\",\r\n    \"authority\": {\r\n        \"authorityName\": \"PLAYER\"\r\n    },\r\n    \"avatar\": \"https://example.com/avatar.jpg\",\r\n    \"sentFriendships\": [],\r\n    \"receivedFriendships\": [],\r\n    \"playerAchievement\": []\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePlayer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200 para una actualización exitosa\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"El objeto tiene la estructura correcta y los datos actualizados\", function () {\r",
+									"     var requestPayload = JSON.parse(pm.request.body.raw);\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'name', 'surname', 'password', 'email', 'birthDate', 'nickname', 'authority', 'avatar', 'playerAchievement');\r",
+									"    pm.expect(responseData.id).to.eql(requestPayload.id);\r",
+									"    pm.expect(responseData.name).to.eql(requestPayload.name);\r",
+									"    pm.expect(responseData.surname).to.eql(requestPayload.surname);\r",
+									"    pm.expect(responseData.email).to.eql(requestPayload.email);\r",
+									"    pm.expect(responseData.birthDate).to.eql(requestPayload.birthDate);\r",
+									"    pm.expect(responseData.nickname).to.eql(requestPayload.nickname);\r",
+									"    pm.expect(responseData.authority).to.deep.include({id: requestPayload.authority.id, authority: requestPayload.authority.authority});\r",
+									"});\r",
+									"pm.test(\"Verificar los tipos de datos de los campos\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.surname).to.be.a('string');\r",
+									"    pm.expect(responseData.email).to.be.a('string');\r",
+									"    pm.expect(responseData.birthDate).to.be.a('string');\r",
+									"    pm.expect(responseData.nickname).to.be.a('string');\r",
+									"    pm.expect(responseData.avatar).to.be.a('string');\r",
+									"    pm.expect(responseData.playerAchievement).to.be.an('array');\r",
+									"});\r",
+									"pm.test(\"Verificar la URL del avatar\", function () {\r",
+									"    var responseData = pm.response.json();\r",
+									"    var urlRegex = /^(http|https):\\/\\/[^ \"]+$/;\r",
+									"    pm.expect(responseData.avatar).to.match(urlRegex);\r",
+									"    pm.expect(responseData.avatar).to.eql(\"https://cdn-icons-png.flaticon.com/512/147/147144.png\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 6,\r\n    \"name\": \"Isaac\",\r\n    \"surname\": \"Solis\",\r\n    \"password\": \"$2b$12$EB6dhGe96Fx1dt4CMxkF/ONMXHMNGLwSD9vhOWMwhLqKNRU2IvoCa\",\r\n    \"email\": \"princesita@gmail.com\",\r\n    \"birthDate\": \"2002-07-12\",\r\n    \"nickname\": \"isasolpad\",\r\n    \"authority\": {\r\n        \"id\": 1,\r\n        \"authority\": \"ADMIN\"\r\n    },\r\n    \"avatar\": \"https://cdn-icons-png.flaticon.com/512/147/147144.png\",\r\n    \"playerAchievement\": []\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePlayerById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El código de estado es 200 o 204\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"pm.test(\"Verificar que no hay cuerpo en la respuesta para 204 No Content\", function () {\r",
+									"    if(pm.response.code === 204) {\r",
+									"        pm.response.to.not.have.body;\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/players/601",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"601"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
